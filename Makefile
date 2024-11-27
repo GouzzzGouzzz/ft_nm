@@ -1,18 +1,18 @@
 NAME=ft_nm
-CFLAGS= -g -Wall -Werror -Wextra
+CFLAGS= -g #-Wall -Werror -Wextra
 CC=clang
 OBJ_DIR=obj
+SRC_DIR=src
+MANDATORY= src/main.c\
 
-MANDATORY= main.c\
-
-OBJ=$(MANDATORY:%.c=$(OBJ_DIR)/%.o)
+OBJ=$(MANDATORY:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 all: $(NAME)
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
-$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(NAME): $(OBJ)
@@ -26,4 +26,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: clean fclean all re test
+.PHONY: clean fclean all re
