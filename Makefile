@@ -1,6 +1,6 @@
 NAME=ft_nm
 CFLAGS= -g #-Wall -Werror -Wextra
-CC=gcc
+CC=clang
 OBJ_DIR=obj
 SRC_DIR=src
 MANDATORY= src/main.c\
@@ -16,7 +16,7 @@ $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) -c $(CFLAGS) $(LIBFT) -o $@ $<
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(NAME): $(OBJ)
 	$(MAKE) -C ./libft/ all
