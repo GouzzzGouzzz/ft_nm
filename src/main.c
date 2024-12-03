@@ -38,22 +38,57 @@ void parse_elf64(void *file_map){
 			strtab = sh_i;
 	}
 
-	//from here we have the symbol table and the string table
-	//we can now iterate through the symbol table using the same logic from the prev loop
+	//default nm symbol types
+	//TUWDBRA?
 
 	//Get the symbol table and the string table
 	Elf64_Sym *symbols = (Elf64_Sym *)(file_map + symtab->sh_offset);
 	char *strtab_content = file_map + strtab->sh_offset;
 	int symbol_count = symtab->sh_size / symtab->sh_entsize;
-	for (int i = 0; i < symbol_count; i++) {
+	for (int i = 0; i < symbol_count; i++)
+	{
 		Elf64_Sym *sym = &symbols[i];
 		char *sym_name = strtab_content + sym->st_name;
 		int type = ELF64_ST_TYPE(sym->st_info); //function obj ...
 		int bind = ELF64_ST_BIND(sym->st_info); //local or global or "weak"
-		// i have no idea how i can get the value of the each symbol ("T", "U", etc...)
-		// if (sym->st_shndx == )
-
-		// }
+		char letter = '?';
+		//undefined (U) X
+		//function text code (T) X
+		//weak (W)
+		//absolute (A) X
+		//initialized data (D) X
+		//uninitialized data (B) X
+		//read only data (R) X
+		//lowercase for local else global
+		if (type == STT_FUNC && bind == STB_WEAK){
+			letter = 'W';
+			if (sym->st_shndx == SHN_UNDEF)
+				letter = 'w';
+		}
+		else if (sym->st_shndx == SHN_UNDEF)
+			letter = 'U';
+		else if (sym->st_shndx == SHN_ABS)
+			letter = 'A';
+		else if (sym->st_shndx < SHN_LORESERVE) {
+			Elf64_Shdr *section = &section_headers[sym->st_shndx];
+			char *section_name = shstrtab + section->sh_name;
+			ft_putstr_fd(section_name, 1);
+			ft_putchar_fd(' ', 1);
+			if (ft_strncmp(section_name, ".text", 6) == 0)
+				letter = 'T';
+			else if (ft_strncmp(section_name, ".data", 6) == 0)
+				letter = 'D';
+			else if (ft_strncmp(section_name, ".bss", 5) == 0)
+				letter = 'B';
+			else if (ft_strncmp(section_name, ".rodata", 8) == 0)
+				letter = 'R';
+		}
+		if (bind == STB_LOCAL && letter != 'U' && letter != 'A' && letter != 'W' && letter != 'w')
+			letter = ft_tolower(letter);
+		ft_putstr_fd(&letter, 1);
+		ft_putchar_fd(' ', 1);
+		ft_putendl_fd(sym_name, 1);
+	}
 }
 
 void parse_elf32(void *file_map){
