@@ -1,10 +1,5 @@
 #include "../headers/nm.h"
 
-
-//open le file
-//le map to mem
-//
-
 bool is_elf(Elf64_Ehdr *header)
 {
 	if (header->e_ident[EI_MAG0] == ELFMAG0 &&
@@ -17,26 +12,36 @@ bool is_elf(Elf64_Ehdr *header)
 	return (false);
 }
 
+void get_table64(Elf64_Shdr **symtab, Elf64_Shdr **strtab, Elf64_Ehdr *header, Elf64_Shdr *section_headers, char *shstrtab)
+{
+	for (int i = 0; i < header->e_shnum; i++) {
+		Elf64_Shdr *sh_i = &section_headers[i];
+		char *section_name = shstrtab + sh_i->sh_name;
+		if (ft_strncmp(section_name, ".symtab", 8) == 0)
+			*symtab = sh_i;
+		if (ft_strncmp(section_name, ".strtab",8) == 0)
+			*strtab = sh_i;
+	}
+}
 
 void parse_elf64(void *file_map){
-	Elf64_Ehdr *header = (Elf64_Ehdr *)file_map;
-	Elf64_Shdr *section_headers = (Elf64_Shdr *)(file_map + header->e_shoff);
-	char *shstrtab = file_map + section_headers[header->e_shstrndx].sh_offset;
-
+	Elf64_Ehdr *header;
+	Elf64_Shdr *section_headers;
+	char *shstrtab;
 	Elf64_Shdr *symtab = NULL;
 	Elf64_Shdr *strtab = NULL;
 
+	header = (Elf64_Ehdr *)file_map;
+	section_headers = (Elf64_Shdr *)(file_map + header->e_shoff);
+	shstrtab = file_map + section_headers[header->e_shstrndx].sh_offset;
 
-	for (int i = 0; i < header->e_shnum; i++) {
-		Elf64_Shdr *sh_i = &section_headers[i];//get the section header at index i
-		char *section_name = shstrtab + sh_i->sh_name; // like doing tab[index] to get the name of the section
-		// ft_putstr_fd(section_name, 1);
-		// ft_putstr_fd("\n", 1);
-		if (ft_strncmp(section_name, ".symtab", 8) == 0)
-			symtab = sh_i;
-		if (ft_strncmp(section_name, ".strtab",8) == 0)
-			strtab = sh_i;
+	get_table64(&symtab, &strtab, header, section_headers, shstrtab);
+	if (!symtab || !strtab)
+	{
+		ft_putstr_fd("No symbol table or string table found.\n", 1);
+		exit(EXIT_FAILURE);
 	}
+	//CLEANED SO FAR
 
 	//Get the symbol table and the string table
 	Elf64_Sym *symbols = (Elf64_Sym *)(file_map + symtab->sh_offset);
@@ -99,11 +104,6 @@ void parse_elf64(void *file_map){
 	}
 }
 
-//abi : note SHF_ALLOC global
-//fini array : SHT_FINI_ARRAY SHF_ALLOC global
-//eh frame: SHT_PROGBITS SHF_ALLOC global
-//eh frame hdr: SHT_PROGBITS SHF_ALLOC global
-//.got : SHT_PROGBITS 3 global
 void parse_elf32(void *file_map){
 	Elf32_Ehdr *header = (Elf32_Ehdr *)file_map;
 
@@ -141,17 +141,11 @@ void start_parsing(char *file)
 	header = (Elf64_Ehdr *)file_map;
 	if (is_elf(file_map)){
 		if (header->e_ident[EI_CLASS] == ELFCLASS64)
-		{
 			parse_elf64(file_map);
-		}
 		else if (header->e_ident[EI_CLASS] == ELFCLASS32)
-		{
 			parse_elf32(file_map);
-		}
 		else
-		{
 			ft_putstr_fd("Unknown ELF class.\n", 1);
-		}
 	}
 	else
 	{
