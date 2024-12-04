@@ -38,9 +38,6 @@ void parse_elf64(void *file_map){
 			strtab = sh_i;
 	}
 
-	//default nm symbol types
-	//TUWDBRA?
-
 	//Get the symbol table and the string table
 	Elf64_Sym *symbols = (Elf64_Sym *)(file_map + symtab->sh_offset);
 	char *strtab_content = file_map + strtab->sh_offset;
@@ -52,14 +49,10 @@ void parse_elf64(void *file_map){
 		int type = ELF64_ST_TYPE(sym->st_info); //function obj ...
 		int bind = ELF64_ST_BIND(sym->st_info); //local or global or "weak"
 		char letter = '?';
-		//undefined (U) X
-		//function text code (T) X
-		//weak (W)
-		//absolute (A) X
-		//initialized data (D) X
-		//uninitialized data (B) X
-		//read only data (R) X
-		//lowercase for local else global
+		Elf64_Shdr *section = NULL;
+		char *section_name = NULL;
+		if (type == STT_FILE)
+			continue;
 		if (type == STT_FUNC && bind == STB_WEAK){
 			letter = 'W';
 			if (sym->st_shndx == SHN_UNDEF)
@@ -70,10 +63,8 @@ void parse_elf64(void *file_map){
 		else if (sym->st_shndx == SHN_ABS)
 			letter = 'A';
 		else if (sym->st_shndx < SHN_LORESERVE) {
-			Elf64_Shdr *section = &section_headers[sym->st_shndx];
-			char *section_name = shstrtab + section->sh_name;
-			ft_putstr_fd(section_name, 1);
-			ft_putchar_fd(' ', 1);
+			section = &section_headers[sym->st_shndx];
+			section_name = shstrtab + section->sh_name;
 			if (ft_strncmp(section_name, ".text", 6) == 0)
 				letter = 'T';
 			else if (ft_strncmp(section_name, ".data", 6) == 0)
@@ -82,15 +73,30 @@ void parse_elf64(void *file_map){
 				letter = 'B';
 			else if (ft_strncmp(section_name, ".rodata", 8) == 0)
 				letter = 'R';
+			else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_WRITE))
+				letter = 'D';
+			else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_EXECINSTR))
+				letter = 'T';
+			else if ((section->sh_flags & SHF_ALLOC) && !(section->sh_flags & SHF_WRITE))
+				letter = 'R';
 		}
 		if (bind == STB_LOCAL && letter != 'U' && letter != 'A' && letter != 'W' && letter != 'w')
 			letter = ft_tolower(letter);
-		ft_putstr_fd(&letter, 1);
-		ft_putchar_fd(' ', 1);
-		ft_putendl_fd(sym_name, 1);
+		if (letter != '?'){
+			ft_putstr_fd(&letter, 1);
+			ft_putchar_fd(' ', 1);
+			ft_putendl_fd(sym_name, 1);
+		}else{
+			print_info_section(section_name, sym_name, section, bind, letter);
+		}
 	}
 }
 
+//abi : note SHF_ALLOC global
+//fini array : SHT_FINI_ARRAY SHF_ALLOC global
+//eh frame: SHT_PROGBITS SHF_ALLOC global
+//eh frame hdr: SHT_PROGBITS SHF_ALLOC global
+//.got : SHT_PROGBITS 3 global
 void parse_elf32(void *file_map){
 	Elf32_Ehdr *header = (Elf32_Ehdr *)file_map;
 

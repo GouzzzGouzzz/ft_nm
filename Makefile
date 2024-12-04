@@ -4,6 +4,7 @@ CC=clang
 OBJ_DIR=obj
 SRC_DIR=src
 MANDATORY= src/main.c\
+	src/debug.c\
 
 LIBFT=-Llibft/ -lft
 LIBFT_OBJ=./libft/obj/*.o
