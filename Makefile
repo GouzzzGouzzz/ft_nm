@@ -5,6 +5,7 @@ OBJ_DIR=obj
 SRC_DIR=src
 MANDATORY= src/main.c\
 	src/debug.c\
+	src/show_info.c\
 
 LIBFT=-Llibft/ -lft
 LIBFT_OBJ=./libft/obj/*.o

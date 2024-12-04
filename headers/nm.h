@@ -9,4 +9,6 @@
 // DEBUG
 void print_info_section(char *section_name, char *sym_name, Elf64_Shdr *section, int bind, char letter);
 
+//Added functions
+void	print_hexa(int nb, int lower_case);
 #endif

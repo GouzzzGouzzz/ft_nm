@@ -83,7 +83,14 @@ void parse_elf64(void *file_map){
 		if (bind == STB_LOCAL && letter != 'U' && letter != 'A' && letter != 'W' && letter != 'w')
 			letter = ft_tolower(letter);
 		if (letter != '?'){
-			ft_putstr_fd(&letter, 1);
+			if (bind == STB_LOCAL && letter == 'U')
+				continue;
+			if (letter != 'U' && letter != 'w')
+				print_hexa(sym->st_value, 1);
+			else
+				ft_putstr_fd("                ", 1);
+			ft_putchar_fd(' ', 1);
+			ft_putchar_fd(letter, 1);
 			ft_putchar_fd(' ', 1);
 			ft_putendl_fd(sym_name, 1);
 		}else{
