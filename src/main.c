@@ -58,7 +58,7 @@ void parse_elf64(void *file_map){
 		char *section_name = NULL;
 		if (type == STT_FILE)
 			continue;
-		if (type == STT_FUNC && bind == STB_WEAK){
+		if (bind == STB_WEAK){
 			letter = 'W';
 			if (sym->st_shndx == SHN_UNDEF)
 				letter = 'w';
