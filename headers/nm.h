@@ -6,9 +6,31 @@
 #include <stdbool.h>
 #include <elf.h>
 
-// DEBUG
-void print_info_section(char *section_name, char *sym_name, Elf64_Shdr *section, int bind, char letter);
+//Simple structure to store symbol data for each symbol, this is used inside a linked list
+typedef struct s_symbol_data
+{
+	char letter;
+	char *sym_name;
+	Elf64_Addr value;
+} symbol_data;
 
-//Added functions
+
+//Main functions
+void	parse_elf64(void *file_map);
+void	parse_elf32(void *file_map);
+
+
+//Utils linked list functions
+void	free_symbol_data(t_list *symbol_list);
+void	print_symbol_data(t_list *symbol_list);
+void	list_store_sym_data(t_list **symbol_list, char letter, char *sym_name, Elf64_Addr value);
+//Utils functions
+bool	is_elf(Elf64_Ehdr *header);
 void	print_hexa(int nb, int lower_case);
+
+
+// DEBUG
+void	print_info_section(char *section_name, char *sym_name, Elf64_Shdr *section, int bind, char letter);
+
+
 #endif
