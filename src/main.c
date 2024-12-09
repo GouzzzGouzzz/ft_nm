@@ -9,6 +9,7 @@ void start_parsing(char *file)
 	struct stat buf; //structure for fstat
 	void *file_map;
 	Elf64_Ehdr *header;
+	t_list *symbol_list = NULL;
 
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
@@ -34,7 +35,7 @@ void start_parsing(char *file)
 	header = (Elf64_Ehdr *)file_map;
 	if (is_elf(file_map)){
 		if (header->e_ident[EI_CLASS] == ELFCLASS64)
-			parse_elf64(file_map);
+			symbol_list = parse_elf64(file_map);
 		else if (header->e_ident[EI_CLASS] == ELFCLASS32)
 			parse_elf32(file_map);
 		else
@@ -46,12 +47,20 @@ void start_parsing(char *file)
 		munmap(file_map, buf.st_size);
 		exit(EXIT_FAILURE);
 	}
+	//sort in ascii order
+	if (symbol_list)
+	{
+		merge_sortASCII(&symbol_list);
+		print_symbol_data(symbol_list);
+		free_symbol_data(symbol_list);
+	}
 	munmap(file_map, buf.st_size);
 	exit(EXIT_SUCCESS);
 }
 
 int main(int ac, char **av)
 {
+
 	if (ac == 1)
 	{
 		start_parsing("a.out");

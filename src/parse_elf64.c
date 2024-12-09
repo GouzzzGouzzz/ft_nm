@@ -53,7 +53,7 @@ char retrieve_letter(int bind, char* shstrtab, Elf64_Shdr *section_headers, Elf6
 	return (letter);
 }
 
-void parse_elf64(void *file_map){
+t_list *parse_elf64(void *file_map){
 	Elf64_Ehdr	*header;
 	Elf64_Shdr	*section_headers;
 	Elf64_Shdr	*symtab = NULL;
@@ -104,6 +104,7 @@ void parse_elf64(void *file_map){
 			print_info_section(section_name, sym_name, section, bind, letter);
 		}
 	}
-	print_symbol_data(symbol_list);
-	free_symbol_data(symbol_list);
+	return symbol_list;
+	// print_symbol_data(symbol_list);
+	// free_symbol_data(symbol_list);
 }
