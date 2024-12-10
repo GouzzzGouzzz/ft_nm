@@ -1,8 +1,5 @@
 #include "../headers/nm.h"
 
-
-
-
 void start_parsing(char *file)
 {
 	int fd;
@@ -37,13 +34,15 @@ void start_parsing(char *file)
 		if (header->e_ident[EI_CLASS] == ELFCLASS64)
 			symbol_list = parse_elf64(file_map);
 		else if (header->e_ident[EI_CLASS] == ELFCLASS32)
-			parse_elf32(file_map);
+			symbol_list = parse_elf32(file_map);
 		else
 			ft_putstr_fd("Unknown ELF class.\n", 1);
 	}
 	else
 	{
-		ft_putstr_fd("Not an ELF file.\n", 1);
+		ft_putstr_fd("nm: ",1);
+		ft_putstr_fd(file,1);
+		ft_putstr_fd(": file format not recognized\n",1);
 		munmap(file_map, buf.st_size);
 		exit(EXIT_FAILURE);
 	}
@@ -51,8 +50,14 @@ void start_parsing(char *file)
 	if (symbol_list)
 	{
 		merge_sortASCII(&symbol_list);
-		print_symbol_data(symbol_list);
+		// print_symbol_data(symbol_list);
 		free_symbol_data(symbol_list);
+	}
+	else
+	{
+		ft_putstr_fd("nm: ",1);
+		ft_putstr_fd(file,1);
+		ft_putstr_fd(": no symbols\n",1);
 	}
 	munmap(file_map, buf.st_size);
 	exit(EXIT_SUCCESS);
@@ -60,7 +65,6 @@ void start_parsing(char *file)
 
 int main(int ac, char **av)
 {
-
 	if (ac == 1)
 	{
 		start_parsing("a.out");

@@ -36,7 +36,7 @@ static void list_split(t_list *head, t_list **first_half, t_list **second_half)
 	t_list *slow = head;
 	t_list *fast = head->next;
 
-	//By moving 2 time faster with "*fast" than slow, we end up having slow in the middle of the list
+	//fast goes 2 time faster than slow, slow end up in the middle of the list
 	while (fast && fast->next)
 	{
 		slow = slow->next;

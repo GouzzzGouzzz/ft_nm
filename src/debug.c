@@ -1,17 +1,17 @@
 #include "../headers/nm.h"
 
 void print_info_section(char *section_name, char *sym_name, Elf64_Shdr *section, int bind, char letter){
-	ft_putstr_fd("section name : ",1);
-	if (!section_name)
-		ft_putendl_fd("NULL",1);
-	else
-		ft_putendl_fd(section_name,1);
-
 	ft_putstr_fd("sym name     : ",1);
 	if (!sym_name)
 		ft_putendl_fd("NULL",1);
 	else
 		ft_putendl_fd(sym_name,1);
+
+	ft_putstr_fd("section name : ",1);
+	if (!section_name)
+		ft_putendl_fd("NULL",1);
+	else
+		ft_putendl_fd(section_name,1);
 
 	ft_putstr_fd("section type : ",1);
 	if (section == NULL)

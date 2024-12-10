@@ -17,7 +17,7 @@ typedef struct s_symbol_data
 
 //Main functions
 t_list	*parse_elf64(void *file_map);
-void	parse_elf32(void *file_map);
+t_list	*parse_elf32(void *file_map);
 
 
 //Utils linked list functions

@@ -12,7 +12,7 @@ static void get_table64(Elf64_Shdr **symtab, Elf64_Shdr **strtab, Elf64_Ehdr *he
 	}
 }
 
-char retrieve_letter(int bind, char* shstrtab, Elf64_Shdr *section_headers, Elf64_Sym *sym)
+static char retrieve_letter(int bind, char* shstrtab, Elf64_Shdr *section_headers, Elf64_Sym *sym)
 {
 	char letter;
 	Elf64_Shdr *section = NULL;
@@ -41,6 +41,21 @@ char retrieve_letter(int bind, char* shstrtab, Elf64_Shdr *section_headers, Elf6
 			letter = 'B';
 		else if (ft_strncmp(section_name, ".rodata", 8) == 0)
 			letter = 'R';
+		// might need more check here :
+
+		// sym name     : _ZL14scandir_filter
+		// section name : .tbss
+		// section type : SHT_NOBITS
+		// section flag : SHF_ALLOC SHF_WRITE SHF_TLS
+		// symbols bind : STB_LOCAL
+		// symbol found : d --> should be d
+		// --
+		// sym name     : _ZL14scandir_compar
+		// section name : .tbss
+		// section type : SHT_NOBITS
+		// section flag : SHF_ALLOC SHF_WRITE SHF_TLS
+		// symbols bind : STB_LOCAL
+		// symbol found : d --> should be d
 		else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_WRITE))
 			letter = 'D';
 		else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_EXECINSTR))
@@ -66,10 +81,7 @@ t_list *parse_elf64(void *file_map){
 
 	get_table64(&symtab, &strtab, header, section_headers, shstrtab);
 	if (!symtab || !strtab)
-	{
-		ft_putstr_fd("No symbol table or string table found.\n", 1);
-		exit(EXIT_FAILURE);
-	}
+		return NULL;
 
 	//Get the symbol table and the string table, init the symbol list
 	Elf64_Sym	*symbols;
@@ -98,13 +110,11 @@ t_list *parse_elf64(void *file_map){
 			continue;
 		letter = retrieve_letter(bind, shstrtab, section_headers, sym);
 		list_store_sym_data(&symbol_list, letter, sym_name, sym->st_value);
-		if (1 == 0){
+		if (1 == 1){
 			Elf64_Shdr *section = &section_headers[sym->st_shndx];
 			char *section_name = shstrtab + section->sh_name;
 			print_info_section(section_name, sym_name, section, bind, letter);
 		}
 	}
 	return symbol_list;
-	// print_symbol_data(symbol_list);
-	// free_symbol_data(symbol_list);
 }
