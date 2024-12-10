@@ -48,14 +48,14 @@ static char retrieve_letter(int bind, char* shstrtab, Elf64_Shdr *section_header
 		// section type : SHT_NOBITS
 		// section flag : SHF_ALLOC SHF_WRITE SHF_TLS
 		// symbols bind : STB_LOCAL
-		// symbol found : d --> should be d
+		// symbol found : d --> should be b
 		// --
 		// sym name     : _ZL14scandir_compar
 		// section name : .tbss
 		// section type : SHT_NOBITS
 		// section flag : SHF_ALLOC SHF_WRITE SHF_TLS
 		// symbols bind : STB_LOCAL
-		// symbol found : d --> should be d
+		// symbol found : d --> should be b
 		else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_WRITE))
 			letter = 'D';
 		else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_EXECINSTR))
