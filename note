@@ -1,0 +1,32 @@
+
+
+quite big:
+icetrans.o
+Macros.o
+XlibInt.o
+imRm.o
+
+bigger:
+lcUTF8.o
+Converters.o
+/lib/x86_64-linux-gnu/libasan.so.8
+
+
+small object is processor specific as i have found so S and G might not be needed
+
+A		X
+B b		X
+C c		X
+D d		X
+G g		cant find what a small object is
+I i		not to do
+N n		X
+p		not sure what to do
+R r		X
+S s		cant find what a small object is
+T t		X
+U u		X
+V v		X
+W w		X
+-		need to research
+?		X
