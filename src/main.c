@@ -50,7 +50,7 @@ void start_parsing(char *file)
 	if (symbol_list)
 	{
 		merge_sortASCII(&symbol_list);
-		// print_symbol_data(symbol_list);
+		print_symbol_data(symbol_list);
 		free_symbol_data(symbol_list);
 	}
 	else

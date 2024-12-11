@@ -17,7 +17,7 @@ static void	print_arr_rev(int size, char *tab)
 	int add_zero;
 
 	add_zero = 16 - size;
-	for (int i =0; i < add_zero; i++)
+	for (int i = 0; i < add_zero; i++)
 		write(1, "0", 1);
 
 	while (size > 0)
@@ -36,7 +36,7 @@ void	print_hexa(int nb, int lower_case)
 
 	if (nb == 0)
 	{
-		write(1, "0", 1);
+		write(1, "0000000000000000", 16);
 		return ;
 	}
 	hexa_set = "0123456789ABCDEF";
