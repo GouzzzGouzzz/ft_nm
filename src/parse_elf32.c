@@ -12,7 +12,7 @@ static void get_table32(Elf32_Shdr **symtab, Elf32_Shdr **strtab, Elf32_Ehdr *he
 	}
 }
 
-static char retrieve_letter(int bind, char* shstrtab, Elf32_Shdr *section_headers, Elf32_Sym *sym)
+static char retrieve_letter(int bind, int type, char* shstrtab, Elf32_Shdr *section_headers, Elf32_Sym *sym)
 {
 	char letter;
 	Elf32_Shdr *section = NULL;
@@ -21,26 +21,41 @@ static char retrieve_letter(int bind, char* shstrtab, Elf32_Shdr *section_header
 	letter = '?';
 	if (bind == STB_WEAK)
 	{
-		letter = 'W';
-		if (sym->st_shndx == SHN_UNDEF)
-			letter = 'w';
+		if (type == STT_OBJECT) //weak object
+		{
+			letter = 'V';
+			if (sym->st_shndx == SHN_UNDEF)
+				letter = 'v';
+		}
+		else //weak symbol
+		{
+			letter = 'W';
+			if (sym->st_shndx == SHN_UNDEF)
+				letter = 'w';
+		}
 	}
 	else if (sym->st_shndx == SHN_UNDEF)
 		letter = 'U';
 	else if (sym->st_shndx == SHN_ABS)
 		letter = 'A';
+	else if (sym->st_shndx == SHN_COMMON && type == STT_COMMON)
+		letter = 'C';
 	else if (sym->st_shndx < SHN_LORESERVE)
 	{
 		section = &section_headers[sym->st_shndx];
 		section_name = shstrtab + section->sh_name;
 		if (ft_strncmp(section_name, ".text", 6) == 0)
 			letter = 'T';
-		else if (ft_strncmp(section_name, ".data", 6) == 0)
+		else if (ft_strncmp(section_name, ".data", 6) == 0 || ft_strncmp(section_name, ".data1", 7) == 0)
 			letter = 'D';
 		else if (ft_strncmp(section_name, ".bss", 5) == 0)
 			letter = 'B';
-		else if (ft_strncmp(section_name, ".rodata", 8) == 0)
+		else if (ft_strncmp(section_name, ".rodata", 8) == 0 || ft_strncmp(section_name, ".rodata1", 9) == 0)
 			letter = 'R';
+		else if (ft_strncmp(section_name, ".debug", 7) == 0)
+			letter = 'N';
+		else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_WRITE) && (section->sh_flags & SHF_TLS))
+			letter = 'B';
 		else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_WRITE))
 			letter = 'D';
 		else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_EXECINSTR))
@@ -48,6 +63,7 @@ static char retrieve_letter(int bind, char* shstrtab, Elf32_Shdr *section_header
 		else if ((section->sh_flags & SHF_ALLOC) && !(section->sh_flags & SHF_WRITE))
 			letter = 'R';
 	}
+
 	if (bind == STB_LOCAL && letter != 'U' && letter != 'A' && letter != 'W' && letter != 'w')
 		letter = ft_tolower(letter);
 	return (letter);
@@ -93,7 +109,7 @@ t_list *parse_elf32(void *file_map){
 
 		if (type == STT_FILE || (bind == STB_LOCAL && sym->st_shndx == SHN_UNDEF))
 			continue;
-		letter = retrieve_letter(bind, shstrtab, section_headers, sym);
+		letter = retrieve_letter(bind, type, shstrtab, section_headers, sym);
 		list_store_sym_data(&symbol_list, letter, sym_name, sym->st_value);
 		if (1 == 0){
 			// Elf32_Shdr *section = &section_headers[sym->st_shndx];
