@@ -38,18 +38,22 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 		letter = 'U';
 	else if (sym->st_shndx == SHN_ABS)
 		letter = 'A';
+	else if (sym->st_shndx == SHN_COMMON && type == STT_COMMON)
+		letter = 'C';
 	else if (sym->st_shndx < SHN_LORESERVE)
 	{
 		section = &section_headers[sym->st_shndx];
 		section_name = shstrtab + section->sh_name;
 		if (ft_strncmp(section_name, ".text", 6) == 0)
 			letter = 'T';
-		else if (ft_strncmp(section_name, ".data", 6) == 0)
+		else if (ft_strncmp(section_name, ".data", 6) == 0 || ft_strncmp(section_name, ".data1", 7) == 0)
 			letter = 'D';
 		else if (ft_strncmp(section_name, ".bss", 5) == 0)
 			letter = 'B';
-		else if (ft_strncmp(section_name, ".rodata", 8) == 0)
+		else if (ft_strncmp(section_name, ".rodata", 8) == 0 || ft_strncmp(section_name, ".rodata1", 9) == 0)
 			letter = 'R';
+		else if (ft_strncmp(section_name, ".debug", 7) == 0)
+			letter = 'N';
 		else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_WRITE) && (section->sh_flags & SHF_TLS))
 			letter = 'B';
 		else if ((section->sh_flags & SHF_ALLOC) && (section->sh_flags & SHF_WRITE))
@@ -59,6 +63,7 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 		else if ((section->sh_flags & SHF_ALLOC) && !(section->sh_flags & SHF_WRITE))
 			letter = 'R';
 	}
+
 	if (bind == STB_LOCAL && letter != 'U' && letter != 'A' && letter != 'W' && letter != 'w')
 		letter = ft_tolower(letter);
 	return (letter);
