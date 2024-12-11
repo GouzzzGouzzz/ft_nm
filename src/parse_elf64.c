@@ -44,6 +44,7 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 	{
 		section = &section_headers[sym->st_shndx];
 		section_name = shstrtab + section->sh_name;
+		//maybe add all section .sectioname for each symbol and put it in another function
 		if (ft_strncmp(section_name, ".text", 6) == 0)
 			letter = 'T';
 		else if (ft_strncmp(section_name, ".data", 6) == 0 || ft_strncmp(section_name, ".data1", 7) == 0)
