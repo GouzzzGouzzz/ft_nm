@@ -1,0 +1,9 @@
+By using hexedit myfile and Ctrl + S or Ctrl + G we can modify those value pretty easily
+
+entry : the entry point address is set to a invalid value (starting a 0x18 set to FF FF FF FF)
+header : the header offset is set to an invalid value (0x20 set to FF FF FF FF)
+sectname : .text and .bss are set to .... and ....
+false32 : the e_ident is flagged as a 64 bits elf (0x04 is set to 01 instead of 02)
+entrysize : the entry size of each section is corrupted ( eh_size, phentsize and shentsize are respectively set to 12 34 / 41 44 / 55 11, which are random value that i put)
+offsetsize : the offset size of each section are invalids
+
