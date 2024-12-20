@@ -22,7 +22,7 @@ void start_parsing(char *file)
 	}
 
 	//map file to memory
-	file_map = mmap(0, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	file_map = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (file_map == MAP_FAILED)
 	{
 		ft_putstr_fd("Error mapping file to memory.\n", 1);
@@ -32,7 +32,7 @@ void start_parsing(char *file)
 	header = (Elf64_Ehdr *)file_map;
 	if (is_elf(file_map)){
 		if (header->e_ident[EI_CLASS] == ELFCLASS64)
-			symbol_list = parse_elf64(file_map);
+			symbol_list = parse_elf64(file_map, buf.st_size, file);
 		else if (header->e_ident[EI_CLASS] == ELFCLASS32)
 			symbol_list = parse_elf32(file_map);
 		else
@@ -40,9 +40,7 @@ void start_parsing(char *file)
 	}
 	else
 	{
-		ft_putstr_fd("nm: ",1);
-		ft_putstr_fd(file,1);
-		ft_putstr_fd(": file format not recognized\n",1);
+		error(file, "file format not recognized");
 		munmap(file_map, buf.st_size);
 		exit(EXIT_FAILURE);
 	}
@@ -52,12 +50,6 @@ void start_parsing(char *file)
 		merge_sortASCII(&symbol_list);
 		print_symbol_data(symbol_list);
 		free_symbol_data(symbol_list);
-	}
-	else
-	{
-		ft_putstr_fd("nm: ",1);
-		ft_putstr_fd(file,1);
-		ft_putstr_fd(": no symbols\n",1);
 	}
 	munmap(file_map, buf.st_size);
 	exit(EXIT_SUCCESS);

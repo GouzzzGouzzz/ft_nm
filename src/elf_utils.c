@@ -73,3 +73,11 @@ void list_store_sym_data(t_list **symbol_list, char letter, char *sym_name, Elf6
 		ft_lstadd_back(symbol_list, ft_lstnew(data));
 	}
 }
+
+void error(char *filename, char *msg)
+{
+	ft_putstr_fd("nm: ", 2);
+	ft_putstr_fd(filename, 2);
+	ft_putstr_fd(": ", 2);
+	ft_putendl_fd(msg, 2);
+}

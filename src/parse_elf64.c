@@ -70,20 +70,30 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 	return (letter);
 }
 
-t_list *parse_elf64(void *file_map){
+t_list *parse_elf64(void *file_map, unsigned int file_size, char *filename){
 	Elf64_Ehdr	*header;
 	Elf64_Shdr	*section_headers;
 	Elf64_Shdr	*symtab = NULL;
 	Elf64_Shdr	*strtab = NULL;
 	char		*shstrtab;
 
+	//checking correct offset
 	header = (Elf64_Ehdr *)file_map;
+	if (header->e_shoff >= file_size || header->e_phoff >= file_size)
+	{
+		error(filename, "file format not recognized");
+		return NULL;
+	}
+
 	section_headers = (Elf64_Shdr *)(file_map + header->e_shoff);
 	shstrtab = file_map + section_headers[header->e_shstrndx].sh_offset;
 
 	get_table64(&symtab, &strtab, header, section_headers, shstrtab);
 	if (!symtab || !strtab)
+	{
+		error(filename, "no symbols");
 		return NULL;
+	}
 
 	//Get the symbol table and the string table, init the symbol list
 	Elf64_Sym	*symbols;
@@ -91,10 +101,16 @@ t_list *parse_elf64(void *file_map){
 	char		*strtab_content;
 	int			symbol_count;
 
+	if (symtab->sh_offset >= file_size || strtab->sh_offset >= file_size)
+	{
+		error(filename, "file format not recognized");
+		return NULL;
+	}
+
 	symbols = (Elf64_Sym *)(file_map + symtab->sh_offset);
 	strtab_content = file_map + strtab->sh_offset;
 	symbol_count = symtab->sh_size / symtab->sh_entsize;
-
+	//bad sh_size might be a problem
 	for (int i = 0; i < symbol_count; i++)
 	{
 		Elf64_Sym	*sym;

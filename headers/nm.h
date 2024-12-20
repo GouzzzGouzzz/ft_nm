@@ -16,7 +16,7 @@ typedef struct s_symbol_data
 
 
 //Main functions
-t_list	*parse_elf64(void *file_map);
+t_list	*parse_elf64(void *file_map, unsigned int file_size, char *filename);
 t_list	*parse_elf32(void *file_map);
 
 
@@ -29,7 +29,7 @@ void	merge_sortASCII(t_list **symbol_list);
 //Utils functions
 bool	is_elf(Elf64_Ehdr *header);
 void	print_hexa(int nb, int lower_case);
-
+void	error(char *filename, char *msg);
 
 // DEBUG
 void	print_info_section(char *section_name, char *sym_name, Elf64_Shdr *section, int bind, char letter);
