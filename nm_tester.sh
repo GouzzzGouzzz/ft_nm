@@ -1,22 +1,29 @@
 #!/bin/bash
 
-# Directories for outputs
 mkdir -p nm_outputs ft_nm_outputs diffs
 
-# Process each file in the testfiles directory
+GREEN="\e[32m"
+RED="\e[31m"
+RESET="\e[0m"
+ORANGE="\e[33m"
+
 for file in ./testfiles/*; do
-    # Extract the base name of the file
     base_name=$(basename "$file")
 
-    # Execute the nm command and save the result
-    nm "$file" > "nm_outputs/${base_name}.nm_output"
+    nm "$file" > "nm_outputs/${base_name}" 2> "nm_outputs/${base_name}"
 
-    # Execute the ./ft_nm command and save the result
-    ./ft_nm "$file" > "ft_nm_outputs/${base_name}.ft_nm_output"
+    ./ft_nm "$file" > "ft_nm_outputs/${base_name}" 2> "ft_nm_outputs/${base_name}"
 
-	echo " "
-    # Compute the diff and save the result
-    diff "nm_outputs/${base_name}.nm_output" "ft_nm_outputs/${base_name}.ft_nm_output" > "diffs/${base_name}.diff"
+    diff "nm_outputs/${base_name}" "ft_nm_outputs/${base_name}" > "diffs/${base_name}.diff"
+	if [ -s "diffs/${base_name}.diff" ]; then
+		echo -e "${RED}[KO]${RESET} : $base_name"
+		echo -n -e "${ORANGE}Expected:${RESET}"
+		cat "nm_outputs/${base_name}" | head -n 5
+		echo -e "${ORANGE}see diffs/${base_name}.diff for info.${RESET}"
+	else
+		echo -e "${GREEN}[OK]${RESET} : $base_name"
+	fi
+
 done
 
-echo "Processing complete. Check 'nm_outputs', 'ft_nm_outputs', and 'diffs' directories."
+rm -rf nm_outputs ft_nm_outputs

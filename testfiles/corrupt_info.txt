@@ -7,3 +7,5 @@ false32 : the e_ident is flagged as a 64 bits elf (0x04 is set to 01 instead of 
 entrysize : the entry size of each section is corrupted ( eh_size, phentsize and shentsize are respectively set to 12 34 / 41 44 / 55 11, which are random value that i put)
 offsetsize : the offset size of each section are invalids
 
+dumpkeys is an executable without symbol list
+setupcon should return file format not recognized
