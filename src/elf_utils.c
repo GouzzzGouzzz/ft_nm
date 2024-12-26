@@ -81,3 +81,62 @@ void error(char *filename, char *msg)
 	ft_putstr_fd(": ", 2);
 	ft_putendl_fd(msg, 2);
 }
+
+bool check_file_format(int type, void *ptr, unsigned long file_size, char *filename)
+{
+	if (type == ELFCLASS64)
+	{
+		Elf64_Ehdr	*header = (Elf64_Ehdr *)ptr;
+		//there is an offset but no entry or entry size
+		if (header->e_shoff != 0){
+			if (header->e_shnum == 0 || header->e_shentsize == 0) {
+				error(filename, "file format not recognized");
+				return false;
+			}
+		}
+		//check secion header offset and program header offset
+		// (are in bound the file, and small enough to contain all the headers entries)
+		if (header->e_shoff >= file_size || (file_size - header->e_shoff) < (header->e_shnum * header->e_shentsize))
+		{
+			error(filename, "file format not recognized");
+			return false;
+		}
+		if (header->e_phoff >= file_size || (file_size - header->e_phoff) < (header->e_phnum * header->e_phentsize))
+		{
+			error(filename, "file format not recognized");
+			return false;
+		}
+		//Invalid endianess
+		if (header->e_ident[EI_DATA] != ELFDATA2LSB && header->e_ident[EI_DATA] != ELFDATA2MSB)
+		{
+			error(filename, "file format not recognized");
+			return false;
+		}
+	}
+	else if (type == ELFCLASS32)
+	{
+		Elf32_Ehdr	*header = (Elf32_Ehdr *)ptr;
+		if (header->e_shoff != 0){
+			if (header->e_shnum == 0 || header->e_shentsize == 0) {
+				error(filename, "file format not recognized");
+				return false;
+			}
+		}
+		if (header->e_shoff >= file_size || (file_size - header->e_shoff) < (header->e_shnum * header->e_shentsize))
+		{
+			error(filename, "file format not recognized");
+			return false;
+		}
+		if (header->e_phoff >= file_size || (file_size - header->e_phoff) < (header->e_phnum * header->e_phentsize))
+		{
+			error(filename, "file format not recognized");
+			return false;
+		}
+		if (header->e_ident[EI_DATA] != ELFDATA2LSB && header->e_ident[EI_DATA] != ELFDATA2MSB)
+		{
+			error(filename, "file format not recognized");
+			return false;
+		}
+	}
+	return true;
+}

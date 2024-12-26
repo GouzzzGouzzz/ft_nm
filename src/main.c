@@ -34,7 +34,7 @@ void start_parsing(char *file)
 		if (header->e_ident[EI_CLASS] == ELFCLASS64)
 			symbol_list = parse_elf64(file_map, buf.st_size, file);
 		else if (header->e_ident[EI_CLASS] == ELFCLASS32)
-			symbol_list = parse_elf32(file_map);
+			symbol_list = parse_elf32(file_map, buf.st_size, file);
 		else
 			ft_putstr_fd("Unknown ELF class.\n", 1);
 	}

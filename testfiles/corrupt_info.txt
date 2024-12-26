@@ -1,5 +1,7 @@
 By using hexedit myfile and Ctrl + S or Ctrl + G we can modify those value pretty easily
 
+Those files are corrupted libasan.so (64bits)
+
 entry : the entry point address is set to a invalid value (starting a 0x18 set to FF FF FF FF)
 header : the header offset is set to an invalid value (0x20 set to FF FF FF FF)
 sectname : .text and .bss are set to .... and ....

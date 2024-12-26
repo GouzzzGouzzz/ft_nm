@@ -44,12 +44,23 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 	{
 		section = &section_headers[sym->st_shndx];
 		section_name = shstrtab + section->sh_name;
-		//maybe add all section .sectioname for each symbol and put it in another function
 		if (ft_strncmp(section_name, ".text", 6) == 0)
+			letter = 'T';
+		else if (ft_strncmp(section_name, ".plt", 5) == 0)
+			letter = 'T';
+		else if (ft_strncmp(section_name, ".init", 6) == 0)
+			letter = 'T';
+		else if (ft_strncmp(section_name, ".fini", 6) == 0)
 			letter = 'T';
 		else if (ft_strncmp(section_name, ".data", 6) == 0 || ft_strncmp(section_name, ".data1", 7) == 0)
 			letter = 'D';
+		else if (ft_strncmp(section_name, ".got", 5) == 0)
+			letter = 'D';
+		else if (ft_strncmp(section_name, ".tdata", 6) == 0)
+			letter = 'D';
 		else if (ft_strncmp(section_name, ".bss", 5) == 0)
+			letter = 'B';
+		else if (ft_strncmp(section_name, ".tbss", 5) == 0)
 			letter = 'B';
 		else if (ft_strncmp(section_name, ".rodata", 8) == 0 || ft_strncmp(section_name, ".rodata1", 9) == 0)
 			letter = 'R';
@@ -70,7 +81,7 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 	return (letter);
 }
 
-t_list *parse_elf64(void *file_map, unsigned int file_size, char *filename){
+t_list *parse_elf64(void *file_map, unsigned long file_size, char *filename){
 	Elf64_Ehdr	*header;
 	Elf64_Shdr	*section_headers;
 	Elf64_Shdr	*symtab = NULL;
@@ -79,11 +90,9 @@ t_list *parse_elf64(void *file_map, unsigned int file_size, char *filename){
 
 	//checking correct offset
 	header = (Elf64_Ehdr *)file_map;
-	if (header->e_shoff >= file_size || header->e_phoff >= file_size)
-	{
-		error(filename, "file format not recognized");
+
+	if (check_file_format(ELFCLASS64, file_map, file_size, filename) == false)
 		return NULL;
-	}
 
 	section_headers = (Elf64_Shdr *)(file_map + header->e_shoff);
 	shstrtab = file_map + section_headers[header->e_shstrndx].sh_offset;
@@ -110,7 +119,9 @@ t_list *parse_elf64(void *file_map, unsigned int file_size, char *filename){
 	symbols = (Elf64_Sym *)(file_map + symtab->sh_offset);
 	strtab_content = file_map + strtab->sh_offset;
 	symbol_count = symtab->sh_size / symtab->sh_entsize;
+	//
 	//bad sh_size might be a problem
+	//
 	for (int i = 0; i < symbol_count; i++)
 	{
 		Elf64_Sym	*sym;
@@ -124,7 +135,7 @@ t_list *parse_elf64(void *file_map, unsigned int file_size, char *filename){
 		type = ELF64_ST_TYPE(sym->st_info);
 		bind = ELF64_ST_BIND(sym->st_info);
 
-		if (type == STT_FILE || (bind == STB_LOCAL && sym->st_shndx == SHN_UNDEF))
+		if (type == STT_FILE || (bind == STB_LOCAL && sym->st_shndx == SHN_UNDEF) || !sym_name || sym_name[0] == '\0')
 			continue;
 		letter = retrieve_letter(bind, type, shstrtab, section_headers, sym);
 		list_store_sym_data(&symbol_list, letter, sym_name, sym->st_value);
