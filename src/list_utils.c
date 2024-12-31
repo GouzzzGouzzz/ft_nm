@@ -1,12 +1,14 @@
 #include "../headers/nm.h"
 
-void print_symbol_data(t_list *symbol_list)
+void print_symbol_data(t_list *symbol_list, int type)
 {
 	while (symbol_list)
 	{
 		symbol_data *data = symbol_list->content;
 		if (data->letter != 'U' && data->letter != 'w' && data->letter != 'v')
-			print_hexa(data->value, 1);
+			print_hexa(data->value, 1, type);
+		else if (type == 1)
+			ft_putstr_fd("        ", 1);
 		else
 			ft_putstr_fd("                ", 1);
 		ft_putchar_fd(' ', 1);

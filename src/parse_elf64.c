@@ -40,7 +40,9 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 		letter = 'A';
 	else if (sym->st_shndx == SHN_COMMON && type == STT_COMMON)
 		letter = 'C';
-	else if (sym->st_shndx < SHN_LORESERVE)
+	else if (type == STT_GNU_IFUNC)
+		letter = 'i';
+	else
 	{
 		section = &section_headers[sym->st_shndx];
 		section_name = shstrtab + section->sh_name;
@@ -74,8 +76,9 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 			letter = 'T';
 		else if ((section->sh_flags & SHF_ALLOC) && !(section->sh_flags & SHF_WRITE))
 			letter = 'R';
+		else
+			letter = 'N';
 	}
-
 	if (bind == STB_LOCAL && letter != 'U' && letter != 'A' && letter != 'W' && letter != 'w')
 		letter = ft_tolower(letter);
 	return (letter);

@@ -1,5 +1,5 @@
 NAME=ft_nm
-CFLAGS= -g -Wall -Werror -Wextra
+CFLAGS= -g #-Wall -Werror -Wextra
 CC=clang
 OBJ_DIR=obj
 SRC_DIR=src

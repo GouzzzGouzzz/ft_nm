@@ -12,11 +12,14 @@ bool is_elf(Elf64_Ehdr *header)
 	return (false);
 }
 
-static void	print_arr_rev(int size, char *tab)
+static void	print_arr_rev(int size, char *tab, int type)
 {
 	int add_zero;
 
-	add_zero = 16 - size;
+	if (type == 1)
+		add_zero = 8 - size;
+	else
+		add_zero = 16 - size;
 	for (int i = 0; i < add_zero; i++)
 		write(1, "0", 1);
 
@@ -27,14 +30,18 @@ static void	print_arr_rev(int size, char *tab)
 	}
 }
 
-void	print_hexa(int nb, int lower_case)
+void	print_hexa(int nb, int lower_case, int type)
 {
 	unsigned int		nb_cast;
 	int					i;
 	char				*hexa_set;
 	char				hexa_arr[10];
-
-	if (nb == 0)
+	if (type == 1 && nb == 0)
+	{
+		write(1, "00000000", 8);
+		return ;
+	}
+	else if (nb == 0)
 	{
 		write(1, "0000000000000000", 16);
 		return ;
@@ -51,7 +58,7 @@ void	print_hexa(int nb, int lower_case)
 		nb_cast = nb_cast / 16;
 		i++;
 	}
-	print_arr_rev(i, hexa_arr);
+	print_arr_rev(i, hexa_arr, type);
 }
 
 void list_store_sym_data(t_list **symbol_list, char letter, char *sym_name, Elf64_Addr value)

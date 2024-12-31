@@ -46,7 +46,10 @@ void start_parsing(char *file)
 	if (symbol_list)
 	{
 		merge_sortASCII(&symbol_list);
-		print_symbol_data(symbol_list);
+		if (header->e_ident[EI_CLASS] == ELFCLASS32)
+			print_symbol_data(symbol_list, ELFCLASS32);
+		else
+			print_symbol_data(symbol_list, ELFCLASS64);
 		free_symbol_data(symbol_list);
 	}
 	munmap(file_map, buf.st_size);

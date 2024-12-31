@@ -22,13 +22,13 @@ t_list	*parse_elf32(void *file_map, unsigned long file_size, char *filename);
 
 //Utils linked list functions
 void	free_symbol_data(t_list *symbol_list);
-void	print_symbol_data(t_list *symbol_list);
+void	print_symbol_data(t_list *symbol_list, int type);
 void	list_store_sym_data(t_list **symbol_list, char letter, char *sym_name, Elf64_Addr value);
 void	merge_sortASCII(t_list **symbol_list);
 
 //Utils functions
 bool	is_elf(Elf64_Ehdr *header);
-void	print_hexa(int nb, int lower_case);
+void	print_hexa(int nb, int lower_case, int type);
 void	error(char *filename, char *msg);
 bool	check_file_format(int type, void *ptr, unsigned long file_size, char *filename);
 
