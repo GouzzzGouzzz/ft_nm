@@ -1,0 +1,4 @@
+1c1
+< nm: ./testfiles/bad_files/elf_linux_x64_ls_bad_version_1: file format not recognized
+---
+> nm: ./testfiles/bad_files/elf_linux_x64_ls_bad_version_1: no symbols

@@ -6,7 +6,7 @@ void print_symbol_data(t_list *symbol_list, int type)
 	{
 		symbol_data *data = symbol_list->content;
 		if (data->letter != 'U' && data->letter != 'w' && data->letter != 'v')
-			print_hexa(data->value, 1, type);
+			print_hexa(data->addr, 1, type);
 		else if (type == 1)
 			ft_putstr_fd("        ", 1);
 		else
@@ -61,7 +61,20 @@ static t_list* merge_sorted(t_list *first_half, t_list *second_half)
 
 	symbol_data *data_a = first_half->content;
 	symbol_data *data_b = second_half->content;
-	if (ft_strncmp(data_a->sym_name, data_b->sym_name, -1) < 0)
+	if (ft_strncmp(data_a->sym_name, data_b->sym_name, -1) == 0)
+	{
+		if (data_a->addr < data_b->addr)
+		{
+			result = first_half;
+			result->next = merge_sorted(first_half->next, second_half);
+		}
+		else
+		{
+			result = second_half;
+			result->next = merge_sorted(first_half, second_half->next);
+		}
+	}
+	else if (ft_strncmp(data_a->sym_name, data_b->sym_name, -1) < 0)
 	{
 		result = first_half;
 		result->next = merge_sorted(first_half->next, second_half);

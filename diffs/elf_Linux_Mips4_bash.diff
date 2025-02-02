@@ -1,0 +1,4 @@
+1c1
+< nm: ./testfiles/bad_files/elf_Linux_Mips4_bash: no symbols
+---
+> nm: ./testfiles/bad_files/elf_Linux_Mips4_bash: file format not recognized

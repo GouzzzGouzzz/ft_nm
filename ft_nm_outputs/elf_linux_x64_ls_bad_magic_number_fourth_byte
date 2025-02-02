@@ -1,0 +1,1 @@
+nm: ./testfiles/bad_files/elf_linux_x64_ls_bad_magic_number_fourth_byte: file format not recognized

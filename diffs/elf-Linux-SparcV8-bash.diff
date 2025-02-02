@@ -1,0 +1,4 @@
+1c1
+< nm: ./testfiles/bad_files/elf-Linux-SparcV8-bash: no symbols
+---
+> nm: ./testfiles/bad_files/elf-Linux-SparcV8-bash: file format not recognized

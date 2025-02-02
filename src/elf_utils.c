@@ -61,14 +61,14 @@ void	print_hexa(int nb, int lower_case, int type)
 	print_arr_rev(i, hexa_arr, type);
 }
 
-void list_store_sym_data(t_list **symbol_list, char letter, char *sym_name, Elf64_Addr value)
+void list_store_sym_data(t_list **symbol_list, char letter, char *sym_name, Elf64_Addr addr)
 {
 	if (symbol_list == NULL)
 	{
 		symbol_data *data = malloc(sizeof(symbol_data));
 		data->letter = letter;
 		data->sym_name = sym_name;
-		data->value = value;
+		data->addr = addr;
 		*symbol_list = ft_lstnew(data);
 	}
 	else
@@ -76,7 +76,7 @@ void list_store_sym_data(t_list **symbol_list, char letter, char *sym_name, Elf6
 		symbol_data *data = malloc(sizeof(symbol_data));
 		data->letter = letter;
 		data->sym_name = sym_name;
-		data->value = value;
+		data->addr = addr;
 		ft_lstadd_back(symbol_list, ft_lstnew(data));
 	}
 }

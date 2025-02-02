@@ -11,7 +11,7 @@ typedef struct s_symbol_data
 {
 	char letter;
 	char *sym_name;
-	Elf64_Addr value;
+	Elf64_Addr addr;
 } symbol_data;
 
 
@@ -34,6 +34,7 @@ bool	check_file_format(int type, void *ptr, unsigned long file_size, char *filen
 
 // DEBUG
 void	print_info_section(char *section_name, char *sym_name, Elf64_Shdr *section, int bind, char letter);
+void	print_info_section32(char *section_name, char *sym_name, Elf32_Shdr *section, int bind, char letter);
 
 
 #endif
