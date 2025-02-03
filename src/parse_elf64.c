@@ -79,7 +79,7 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 		else
 			letter = 'N';
 	}
-	if (bind == STB_LOCAL && letter != 'U' && letter != 'A' && letter != 'W' && letter != 'w')
+	if (bind == STB_LOCAL && letter != 'U' && letter != 'W' && letter != 'w')
 		letter = ft_tolower(letter);
 	return (letter);
 }

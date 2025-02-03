@@ -79,7 +79,7 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf32_Shdr *sect
 		else
 			letter = 'N';
 	}
-	if (bind == STB_LOCAL && letter != 'U' && letter != 'A' && letter != 'W' && letter != 'w')
+	if (bind == STB_LOCAL && letter != 'U' && letter != 'W' && letter != 'w')
 		letter = ft_tolower(letter);
 	return (letter);
 }
@@ -141,14 +141,13 @@ t_list *parse_elf32(void *file_map, unsigned long file_size, char *filename){
 		if (type == STT_FILE || (bind == STB_LOCAL && sym->st_shndx == SHN_UNDEF) || !sym_name || sym_name[0] == '\0')
 			continue;
 		letter = retrieve_letter(bind, type, shstrtab, section_headers, sym);
-		if (letter == 'A')
-		{
-			Elf32_Shdr *section = &section_headers[sym->st_shndx];
-			char *section_name = shstrtab + section->sh_name;
-			print_info_section32(section_name, sym_name, section, bind, letter);
-		}
-		// else
-		// list_store_sym_data(&symbol_list, letter, sym_name, sym->st_value);
+		list_store_sym_data(&symbol_list, letter, sym_name, sym->st_value);
+		// if (letter == 'A')
+		// {
+		// 	Elf32_Shdr *section = &section_headers[sym->st_shndx];
+		// 	char *section_name = shstrtab + section->sh_name;
+		// 	print_info_section32(section_name, sym_name, section, bind, letter);
+		// }
 	}
 	return symbol_list;
 }
