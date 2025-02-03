@@ -3,7 +3,7 @@
 void start_parsing(char *file)
 {
 	int fd;
-	struct stat buf; //structure for fstat
+	struct stat buf;
 	void *file_map;
 	Elf64_Ehdr *header;
 	t_list *symbol_list = NULL;
@@ -16,12 +16,13 @@ void start_parsing(char *file)
 		else if (errno == ENOENT)
 		{
 			char *tmp;
-			char *t;
+			char *tmp2;
+
 			tmp = ft_strjoin(file, "'");
-			t =tmp;
+			tmp2 =tmp;
 			tmp = ft_strjoin("'", tmp);
 			error(tmp, "No such file");
-			free(t);
+			free(tmp2);
 			free(tmp);
 		}
 		exit(EXIT_FAILURE);
@@ -38,12 +39,13 @@ void start_parsing(char *file)
 	if (file_map == MAP_FAILED)
 	{
 		char *tmp;
-		char *t;
+		char *tmp2;
+
 		tmp = ft_strjoin(file, "'");
-		t =tmp;
+		tmp2 =tmp;
 		tmp = ft_strjoin("Warning : '", tmp);
 		error(tmp, "Is a directory");
-		free(t);
+		free(tmp2);
 		free(tmp);
 		exit(EXIT_FAILURE);
 	}
@@ -71,7 +73,6 @@ void start_parsing(char *file)
 			print_symbol_data(symbol_list, ELFCLASS64);
 		free_symbol_data(symbol_list);
 	}
-	// munmap(file_map, buf.st_size);
 	exit(EXIT_SUCCESS);
 }
 
