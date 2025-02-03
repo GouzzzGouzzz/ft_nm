@@ -38,3 +38,7 @@ void	print_info_section32(char *section_name, char *sym_name, Elf32_Shdr *sectio
 
 
 #endif
+
+//no symbol = 0
+//file format not recognized / no perm = 1
+//no file = 2

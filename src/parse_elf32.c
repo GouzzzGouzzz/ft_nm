@@ -95,7 +95,10 @@ t_list *parse_elf32(void *file_map, unsigned long file_size, char *filename){
 	header = (Elf32_Ehdr *)file_map;
 
 	if (check_file_format(ELFCLASS32, file_map, file_size, filename) == false)
-		return NULL;
+	{
+		munmap(file_map, file_size);
+		exit(1);
+	}
 
 	section_headers = (Elf32_Shdr *)(file_map + header->e_shoff);
 	shstrtab = file_map + section_headers[header->e_shstrndx].sh_offset;
@@ -104,7 +107,8 @@ t_list *parse_elf32(void *file_map, unsigned long file_size, char *filename){
 	if (!symtab || !strtab)
 	{
 		error(filename, "no symbols");
-		return NULL;
+		munmap(file_map, file_size);
+		exit(0);
 	}
 
 	//Get the symbol table and the string table, init the symbol list
@@ -116,9 +120,9 @@ t_list *parse_elf32(void *file_map, unsigned long file_size, char *filename){
 	if (symtab->sh_offset >= file_size || strtab->sh_offset >= file_size)
 	{
 		error(filename, "file format not recognized");
-		return NULL;
+		munmap(file_map, file_size);
+		exit(1);
 	}
-
 	symbols = (Elf32_Sym *)(file_map + symtab->sh_offset);
 	strtab_content = file_map + strtab->sh_offset;
 	symbol_count = symtab->sh_size / symtab->sh_entsize;

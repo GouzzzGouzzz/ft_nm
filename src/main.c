@@ -1,5 +1,5 @@
 #include "../headers/nm.h"
-
+#include <errno.h>
 void start_parsing(char *file)
 {
 	int fd;
@@ -11,7 +11,19 @@ void start_parsing(char *file)
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
 	{
-		ft_putstr_fd("Error opening file.\n", 1);
+		if (errno == EACCES)
+			error(file, "Permission denied");
+		else if (errno == ENOENT)
+		{
+			char *tmp;
+			char *t;
+			tmp = ft_strjoin(file, "'");
+			t =tmp;
+			tmp = ft_strjoin("'", tmp);
+			error(tmp, "No such file");
+			free(t);
+			free(tmp);
+		}
 		exit(EXIT_FAILURE);
 	}
 
@@ -25,7 +37,14 @@ void start_parsing(char *file)
 	file_map = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (file_map == MAP_FAILED)
 	{
-		ft_putstr_fd("Error mapping file to memory.\n", 1);
+		char *tmp;
+		char *t;
+		tmp = ft_strjoin(file, "'");
+		t =tmp;
+		tmp = ft_strjoin("Warning : '", tmp);
+		error(tmp, "Is a directory");
+		free(t);
+		free(tmp);
 		exit(EXIT_FAILURE);
 	}
 
@@ -40,7 +59,7 @@ void start_parsing(char *file)
 	{
 		error(file, "file format not recognized");
 		munmap(file_map, buf.st_size);
-		exit(EXIT_FAILURE);
+		exit(0);
 	}
 	//sort in ascii order
 	if (symbol_list)
@@ -52,7 +71,7 @@ void start_parsing(char *file)
 			print_symbol_data(symbol_list, ELFCLASS64);
 		free_symbol_data(symbol_list);
 	}
-	munmap(file_map, buf.st_size);
+	// munmap(file_map, buf.st_size);
 	exit(EXIT_SUCCESS);
 }
 
