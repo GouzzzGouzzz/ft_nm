@@ -127,9 +127,7 @@ t_list *parse_elf64(void *file_map, unsigned long file_size, char *filename){
 	symbols = (Elf64_Sym *)(file_map + symtab->sh_offset);
 	strtab_content = file_map + strtab->sh_offset;
 	symbol_count = symtab->sh_size / symtab->sh_entsize;
-	//
-	//bad sh_size might be a problem
-	//
+
 	for (int i = 0; i < symbol_count; i++)
 	{
 		Elf64_Sym	*sym;

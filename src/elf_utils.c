@@ -131,8 +131,6 @@ bool check_file_format(int type, void *ptr, unsigned long file_size, char *filen
 		}
 		if (header->e_shoff >= file_size || (file_size - header->e_shoff) < (header->e_shnum * header->e_shentsize))
 		{
-			printf(" header shoff= %u, file_size =%lu\n", header->e_shoff, file_size);
-
 			error(filename, "file format not recognized");
 			return false;
 		}
