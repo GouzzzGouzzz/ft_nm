@@ -1,6 +1,7 @@
 #!/bin/bash
 
-mkdir -p nm_outputs ft_nm_outputs diffs
+rm -rf ko_files diffs
+mkdir -p nm_outputs ft_nm_outputs diffs ko_files
 
 GREEN="\e[32m"
 RED="\e[31m"
@@ -16,6 +17,7 @@ for file in ./testfiles/mytest/*; do
 
     diff "nm_outputs/${base_name}" "ft_nm_outputs/${base_name}" > "diffs/${base_name}.diff"
 	if [ -s "diffs/${base_name}.diff" ]; then
+		mv "diffs/${base_name}.diff" "ko_files/${base_name}.diff"
 		echo -e "${RED}[KO]${RESET} : $base_name (dir:mytest)"
 		echo -n -e "${ORANGE}Expected:${RESET}"
 		cat "nm_outputs/${base_name}" | head -n 5
@@ -35,6 +37,7 @@ for file in ./testfiles/mandatory/*; do
 
     diff "nm_outputs/${base_name}" "ft_nm_outputs/${base_name}" > "diffs/${base_name}.diff"
 	if [ -s "diffs/${base_name}.diff" ]; then
+		mv "diffs/${base_name}.diff" "ko_files/${base_name}.diff"
 		echo -e "${RED}[KO]${RESET} : $base_name (dir:mandatory)"
 		echo -n -e "${ORANGE}Expected:${RESET}"
 		cat "nm_outputs/${base_name}" | head -n 5
@@ -55,6 +58,7 @@ for file in ./testfiles/test_bad_file/*; do
 
     diff "nm_outputs/${base_name}" "ft_nm_outputs/${base_name}" > "diffs/${base_name}.diff"
 	if [ -s "diffs/${base_name}.diff" ]; then
+		mv "diffs/${base_name}.diff" "ko_files/${base_name}.diff"
 		echo -e "${RED}[KO]${RESET} : $base_name (dir:test_bad_file)"
 		echo -n -e "${ORANGE}Expected:${RESET}"
 		cat "nm_outputs/${base_name}" | head -n 5
@@ -75,6 +79,7 @@ for file in ./testfiles/good_files/*; do
 
     diff "nm_outputs/${base_name}" "ft_nm_outputs/${base_name}" > "diffs/${base_name}.diff"
 	if [ -s "diffs/${base_name}.diff" ]; then
+		mv "diffs/${base_name}.diff" "ko_files/${base_name}.diff"
 		echo -e "${RED}[KO]${RESET} : $base_name (dir:good_files)"
 		echo -n -e "${ORANGE}Expected:${RESET}"
 		cat "nm_outputs/${base_name}" | head -n 5
@@ -94,6 +99,7 @@ for file in ./testfiles/bad_files/*; do
 
     diff "nm_outputs/${base_name}" "ft_nm_outputs/${base_name}" > "diffs/${base_name}.diff"
 	if [ -s "diffs/${base_name}.diff" ]; then
+		mv "diffs/${base_name}.diff" "ko_files/${base_name}.diff"
 		echo -e "${RED}[KO]${RESET} : $base_name (dir:bad_files)"
 		echo -n -e "${ORANGE}Expected:${RESET}"
 		cat "nm_outputs/${base_name}" | head -n 1

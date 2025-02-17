@@ -66,6 +66,11 @@ void start_parsing(char *file)
 			symbol_list = parse_elf64(file_map, buf.st_size, file);
 		else if (header->e_ident[EI_CLASS] == ELFCLASS32)
 			symbol_list = parse_elf32(file_map, buf.st_size, file);
+		else {
+			error(file, "file format not recognized");
+			munmap(file_map, buf.st_size);
+			exit(0);
+		}
 	}
 	else
 	{

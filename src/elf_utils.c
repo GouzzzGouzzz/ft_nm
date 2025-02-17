@@ -6,10 +6,10 @@ bool is_elf(Elf64_Ehdr *header)
 		header->e_ident[EI_MAG1] == ELFMAG1 &&
 		header->e_ident[EI_MAG2] == ELFMAG2 &&
 		header->e_ident[EI_MAG3] == ELFMAG3)
-	{
-		return (true);
-	}
-	return (false);
+		{
+			return true;
+		}
+	return false;
 }
 
 static void	print_arr_rev(int size, char *tab, int type)
