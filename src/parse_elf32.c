@@ -99,7 +99,6 @@ t_list *parse_elf32(void *file_map, unsigned long file_size, char *filename){
 		munmap(file_map, file_size);
 		exit(1);
 	}
-
 	section_headers = (Elf32_Shdr *)(file_map + header->e_shoff);
 	shstrtab = file_map + section_headers[header->e_shstrndx].sh_offset;
 
@@ -126,9 +125,7 @@ t_list *parse_elf32(void *file_map, unsigned long file_size, char *filename){
 	symbols = (Elf32_Sym *)(file_map + symtab->sh_offset);
 	strtab_content = file_map + strtab->sh_offset;
 	symbol_count = symtab->sh_size / symtab->sh_entsize;
-	//
-	//bad sh_size might be a problem
-	//
+
 	for (int i = 0; i < symbol_count; i++)
 	{
 		Elf32_Sym	*sym;
