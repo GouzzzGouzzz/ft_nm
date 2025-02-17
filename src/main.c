@@ -1,5 +1,21 @@
 #include "../headers/nm.h"
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+char *str_create_error(char *file, char *prev)
+{
+	char *tmp;
+	char *tmp2;
+
+	tmp = ft_strjoin(file, "'");
+	tmp2 =tmp;
+	tmp = ft_strjoin(prev, tmp);
+	free(tmp2);
+	return tmp;
+}
+
 void start_parsing(char *file)
 {
 	int fd;
@@ -16,13 +32,8 @@ void start_parsing(char *file)
 		else if (errno == ENOENT)
 		{
 			char *tmp;
-			char *tmp2;
-
-			tmp = ft_strjoin(file, "'");
-			tmp2 =tmp;
-			tmp = ft_strjoin("'", tmp);
+			tmp = str_create_error(file, "'");
 			error(tmp, "No such file");
-			free(tmp2);
 			free(tmp);
 		}
 		exit(EXIT_FAILURE);
@@ -36,17 +47,16 @@ void start_parsing(char *file)
 
 	//map file to memory
 	file_map = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (file_map == MAP_FAILED)
+	if (S_ISDIR(buf.st_mode))
 	{
 		char *tmp;
-		char *tmp2;
-
-		tmp = ft_strjoin(file, "'");
-		tmp2 =tmp;
-		tmp = ft_strjoin("Warning : '", tmp);
-		error(tmp, "Is a directory");
-		free(tmp2);
+		tmp = str_create_error(file, "Warning: '");
+		error(tmp, "\b\b is a directory");
 		free(tmp);
+		exit(EXIT_FAILURE);
+	}
+	else if (file_map == MAP_FAILED)
+	{
 		exit(EXIT_FAILURE);
 	}
 
