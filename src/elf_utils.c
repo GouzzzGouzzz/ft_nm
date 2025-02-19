@@ -5,8 +5,9 @@ bool is_elf(Elf64_Ehdr *header)
 	if (header->e_ident[EI_MAG0] == ELFMAG0 &&
 		header->e_ident[EI_MAG1] == ELFMAG1 &&
 		header->e_ident[EI_MAG2] == ELFMAG2 &&
-		header->e_ident[EI_MAG3] == ELFMAG3)
-		{
+		header->e_ident[EI_MAG3] == ELFMAG3){
+			if (header->e_ident[EI_VERSION] != EV_CURRENT)
+				return false;
 			return true;
 		}
 	return false;
@@ -102,7 +103,7 @@ bool check_file_format(int type, void *ptr, unsigned long file_size, char *filen
 			}
 		}
 		//check secion header offset and program header offset
-		// (are in bound the file, and small enough to contain all the headers entries)
+		// (are in bound the file, and big enough to contain all the headers entries)
 		if (header->e_shoff >= file_size || (file_size - header->e_shoff) < (header->e_shnum * header->e_shentsize))
 		{
 			error(filename, "file format not recognized");
@@ -136,12 +137,12 @@ bool check_file_format(int type, void *ptr, unsigned long file_size, char *filen
 		}
 		if (header->e_phoff >= file_size || (file_size - header->e_phoff) < (header->e_phnum * header->e_phentsize))
 		{
-			error(filename, "file format not recognized2");
+			error(filename, "file format not recognized");
 			return false;
 		}
 		if (header->e_ident[EI_DATA] != ELFDATA2LSB && header->e_ident[EI_DATA] != ELFDATA2MSB)
 		{
-			error(filename, "file format not recognized3");
+			error(filename, "file format not recognized");
 			return false;
 		}
 	}
