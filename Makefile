@@ -1,10 +1,9 @@
 NAME=ft_nm
-CFLAGS= -g #-Wall -Werror -Wextra
+CFLAGS= -g -Wall -Werror -Wextra
 CC=clang
 OBJ_DIR=obj
 SRC_DIR=src
 MANDATORY= src/main.c\
-	src/debug.c\
 	src/elf_utils.c\
 	src/parse_elf32.c\
 	src/parse_elf64.c\

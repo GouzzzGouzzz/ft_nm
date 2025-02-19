@@ -35,13 +35,4 @@ uint64_t	to_little_endian_64(uint64_t value);
 uint32_t	to_little_endian_32(uint32_t value);
 uint16_t	to_little_endian_16(uint16_t value);
 
-// DEBUG
-void	print_info_section(char *section_name, char *sym_name, Elf64_Shdr *section, int bind, char letter);
-void	print_info_section32(char *section_name, char *sym_name, Elf32_Shdr *section, int bind, char letter);
-#include <stdio.h>
-
 #endif
-
-//no symbol = 0
-//file format not recognized / no perm = 1
-//no file = 2
