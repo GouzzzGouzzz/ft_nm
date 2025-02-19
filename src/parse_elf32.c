@@ -84,6 +84,31 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf32_Shdr *sect
 	return (letter);
 }
 
+static void convert_to_little_endian(Elf32_Ehdr *header, void *file_map)
+{
+	header->e_phoff = to_little_endian_32(header->e_phoff);
+	header->e_shoff = to_little_endian_32(header->e_shoff);
+	header->e_shnum = to_little_endian_16(header->e_shnum);
+	header->e_shentsize = to_little_endian_16(header->e_shentsize);
+	header->e_phnum = to_little_endian_16(header->e_phnum);
+	header->e_phentsize = to_little_endian_16(header->e_phentsize);
+	header->e_shstrndx = to_little_endian_16(header->e_shstrndx);
+	for (int i = 0; i < header->e_shnum; i++)
+	{
+		Elf32_Shdr *sh = (Elf32_Shdr *)(file_map + header->e_shoff + i * header->e_shentsize);
+		sh->sh_name = to_little_endian_32(sh->sh_name);
+		sh->sh_type = to_little_endian_32(sh->sh_type);
+		sh->sh_flags = to_little_endian_32(sh->sh_flags);
+		sh->sh_addr = to_little_endian_32(sh->sh_addr);
+		sh->sh_offset = to_little_endian_32(sh->sh_offset);
+		sh->sh_size = to_little_endian_32(sh->sh_size);
+		sh->sh_link = to_little_endian_32(sh->sh_link);
+		sh->sh_info = to_little_endian_32(sh->sh_info);
+		sh->sh_addralign = to_little_endian_32(sh->sh_addralign);
+		sh->sh_entsize = to_little_endian_32(sh->sh_entsize);
+	}
+}
+
 t_list *parse_elf32(void *file_map, unsigned long file_size, char *filename){
 	Elf32_Ehdr	*header;
 	Elf32_Shdr	*section_headers;
@@ -93,15 +118,18 @@ t_list *parse_elf32(void *file_map, unsigned long file_size, char *filename){
 
 	//checking correct offset
 	header = (Elf32_Ehdr *)file_map;
+	if (header->e_ident[EI_DATA] == ELFDATA2MSB)
+		convert_to_little_endian(header, file_map);
 
 	if (check_file_format(ELFCLASS32, file_map, file_size, filename) == false)
 	{
 		munmap(file_map, file_size);
 		exit(1);
 	}
-	section_headers = (Elf32_Shdr *)(file_map + header->e_shoff);
-	shstrtab = file_map + section_headers[header->e_shstrndx].sh_offset;
 
+	section_headers = (Elf32_Shdr *)(char *)(file_map + header->e_shoff);
+	shstrtab = file_map + section_headers[header->e_shstrndx].sh_offset;
+	//Get the symbol table and the string table, init the symbol list
 	get_table32(&symtab, &strtab, header, section_headers, shstrtab);
 	if (!symtab || !strtab)
 	{
@@ -110,18 +138,11 @@ t_list *parse_elf32(void *file_map, unsigned long file_size, char *filename){
 		exit(0);
 	}
 
-	//Get the symbol table and the string table, init the symbol list
 	Elf32_Sym	*symbols;
 	t_list		*symbol_list = NULL;
 	char		*strtab_content;
 	int			symbol_count;
 
-	if (symtab->sh_offset >= file_size || strtab->sh_offset >= file_size)
-	{
-		error(filename, "file format not recognized");
-		munmap(file_map, file_size);
-		exit(1);
-	}
 	symbols = (Elf32_Sym *)(file_map + symtab->sh_offset);
 	strtab_content = file_map + strtab->sh_offset;
 	symbol_count = symtab->sh_size / symtab->sh_entsize;

@@ -84,6 +84,31 @@ static char retrieve_letter(int bind, int type, char* shstrtab, Elf64_Shdr *sect
 	return (letter);
 }
 
+static void convert_to_little_endian(Elf64_Ehdr *header, void *file_map)
+{
+	header->e_phoff = to_little_endian_64(header->e_phoff);
+	header->e_shoff = to_little_endian_64(header->e_shoff);
+	header->e_shnum = to_little_endian_16(header->e_shnum);
+	header->e_shentsize = to_little_endian_16(header->e_shentsize);
+	header->e_phnum = to_little_endian_16(header->e_phnum);
+	header->e_phentsize = to_little_endian_16(header->e_phentsize);
+	header->e_shstrndx = to_little_endian_16(header->e_shstrndx);
+	for (int i = 0; i < header->e_shnum; i++)
+	{
+		Elf64_Shdr *sh = (Elf64_Shdr *)(file_map + header->e_shoff + i * header->e_shentsize);
+		sh->sh_name = to_little_endian_32(sh->sh_name);
+		sh->sh_type = to_little_endian_32(sh->sh_type);
+		sh->sh_flags = to_little_endian_64(sh->sh_flags);
+		sh->sh_addr = to_little_endian_64(sh->sh_addr);
+		sh->sh_offset = to_little_endian_64(sh->sh_offset);
+		sh->sh_size = to_little_endian_64(sh->sh_size);
+		sh->sh_link = to_little_endian_32(sh->sh_link);
+		sh->sh_info = to_little_endian_32(sh->sh_info);
+		sh->sh_addralign = to_little_endian_64(sh->sh_addralign);
+		sh->sh_entsize = to_little_endian_64(sh->sh_entsize);
+	}
+}
+
 t_list *parse_elf64(void *file_map, unsigned long file_size, char *filename){
 	Elf64_Ehdr	*header;
 	Elf64_Shdr	*section_headers;
@@ -93,6 +118,8 @@ t_list *parse_elf64(void *file_map, unsigned long file_size, char *filename){
 
 	//checking correct offset
 	header = (Elf64_Ehdr *)file_map;
+	if (header->e_ident[EI_DATA] == ELFDATA2MSB)
+		convert_to_little_endian(header, file_map);
 
 	if (check_file_format(ELFCLASS64, file_map, file_size, filename) == false)
 	{
@@ -145,11 +172,6 @@ t_list *parse_elf64(void *file_map, unsigned long file_size, char *filename){
 			continue;
 		letter = retrieve_letter(bind, type, shstrtab, section_headers, sym);
 		list_store_sym_data(&symbol_list, letter, sym_name, sym->st_value);
-		if (1 == 0){
-			Elf64_Shdr *section = &section_headers[sym->st_shndx];
-			char *section_name = shstrtab + section->sh_name;
-			print_info_section(section_name, sym_name, section, bind, letter);
-		}
 	}
 	return symbol_list;
 }

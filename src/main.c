@@ -46,7 +46,7 @@ void start_parsing(char *file)
 	}
 
 	//map file to memory
-	file_map = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	file_map = mmap(NULL, buf.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 	if (S_ISDIR(buf.st_mode))
 	{
 		char *tmp;

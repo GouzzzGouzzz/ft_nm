@@ -31,10 +31,14 @@ bool	is_elf(Elf64_Ehdr *header);
 void	print_hexa(int nb, int lower_case, int type);
 void	error(char *filename, char *msg);
 bool	check_file_format(int type, void *ptr, unsigned long file_size, char *filename);
+uint64_t	to_little_endian_64(uint64_t value);
+uint32_t	to_little_endian_32(uint32_t value);
+uint16_t	to_little_endian_16(uint16_t value);
 
 // DEBUG
 void	print_info_section(char *section_name, char *sym_name, Elf64_Shdr *section, int bind, char letter);
 void	print_info_section32(char *section_name, char *sym_name, Elf32_Shdr *section, int bind, char letter);
+#include <stdio.h>
 
 #endif
 
